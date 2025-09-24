@@ -1,0 +1,13 @@
+
+services:
+  ollama:
+    image: ollama/ollama:latest
+    ports:
+      - "11434:11434"
+    volumes:
+      - ./entrypoint.sh:/entrypoint.sh
+      - ./ollama:/root/.ollama
+    environment:
+      - MODEL_NAME=gemma3:1b
+    entrypoint: ["/usr/bin/bash", "/entrypoint.sh"]
+
