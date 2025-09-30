@@ -1,14 +1,26 @@
 
 services:
-  ollama:
+  ollama-llm:
     image: ollama/ollama:latest
-    container_name: ollama
     ports:
       - "11434:11434"
     volumes:
       - ./entrypoint.sh:/entrypoint.sh
       - ./ollama:/root/.ollama
     environment:
-      - MODEL_NAME=gemma3:1b
+      - OLLAMA_MODEL=gemma3:1b
     entrypoint: ["/usr/bin/bash", "/entrypoint.sh"]
-
+    restart: unless-stopped
+  web-frontend:
+    build: ./frontend
+    ports:
+      - "8080:8080"
+    depends_on:
+     ollama-llm:
+       condition: service_started
+    environment:
+      - APP_PORT=8080
+      - GEOLOCATE_ENABLED=true
+      - DEFAULT_REGION=france
+      - OLLAMA_HOST=http://ollama-llm:11434
+    restart: unless-stopped

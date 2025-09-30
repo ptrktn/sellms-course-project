@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Wine & Cheese Pairing</title>
+</head>
+<body>
+    <h1>Seasonal Wine & Cheese Pairing</h1>
+    <form method="post">
+        <label>Season:</label><input name="season"><br>
+        <label>Location:</label><input name="location"><br>
+        <label>Wine Style:</label><input name="wine_style"><br>
+        <label>Cheese Type:</label><input name="cheese_type"><br>
+        <label>Budget:</label><input name="budget"><br>
+        <label>Dietary:</label><input name="dietary"><br>
+        <button type="submit">Get Pairing</button>
+    </form>
+
+    {% if result %}
+        <h2>Recommended Pairing</h2>
+        <p><strong>Wine:</strong> {{ result.pairing.wine }}</p>
+        <p><strong>Cheese:</strong> {{ result.pairing.cheese }}</p>
+        <p><strong>Notes:</strong> {{ result.pairing.notes }}</p>
+    {% endif %}
+</body>
+</html>
