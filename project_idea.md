@@ -1,1 +1,2 @@
-# TODO: key idea of the project summarized in a few sentences
+# The project idea
+This project implements a web application that uses a large language model to generate curated wine and cheese pairings tailored to the user's current season and geographic location. By blending local climate cues with regional culinary preferences, it offers recommendations that feel both timely and culturally resonant. The LLM acts as a creative engine, interpreting seasonal moods and local flavors to suggest combinations that elevate the dining experience—whether it's a crisp white with fresh chèvre in springtime Kyoto or a bold red with aged Comté in autumnal Lyon.
