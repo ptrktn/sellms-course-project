@@ -1,11 +1,77 @@
 import requests
-from config import OLLAMA_HOST
+import ollama
+import os
+
+from config import OLLAMA_HOST, OLLAMA_MODEL
+from datetime import datetime
+
+os.environ['OLLAMA_HOST'] = OLLAMA_HOST
+
+def get_location():
+    try:
+        response = requests.get("https://ipinfo.io/json")
+        data = response.json()
+        return "ISO 3166-1 country code " + data.get("country", "unknown")
+    except Exception as e:
+        print(f"Error fetching location: {e}")
+        return "unknown"
+
+def get_country_and_season():
+    # Get IP info and current month
+    ipinfo = requests.get("https://ipinfo.io/json").json()
+    month = datetime.utcnow().month
+    month = int(month)
+    loc = ipinfo.get("loc", "0,0")
+    lat = float(loc.split(",")[0]) if "," in loc else 0.0
+    country = ipinfo.get("country", "unknown")
+
+    # Determine hemisphere
+    hemisphere = "northern" if lat >= 0 else "southern"
+
+    # Assign seasons based on hemisphere
+    if hemisphere == "northern":
+        if month in [12, 1, 2]:
+            season = "winter"
+        elif month in [3, 4, 5]:
+            season = "spring"
+        elif month in [6, 7, 8]:
+            season = "summer"
+        else:
+            season = "autumn"
+    else:
+        if month in [12, 1, 2]:
+            season = "summer"
+        elif month in [3, 4, 5]:
+            season = "autumn"
+        elif month in [6, 7, 8]:
+            season = "winter"
+        else:
+            season = "spring"
+    return f"ISO 3166-1 country code {country}", season
 
 def generate_pairing(season, location, preferences):
-    payload = {
-        "season": season,
-        "location": location,
-        "preferences": preferences
+    if not season and not location:
+        location, season = get_country_and_season()
+    else:
+        location = location if location else get_location()
+        if not season:
+            tmp, season = get_country_and_season()
+
+    prompt = f"""
+        Suggest a wine and cheese pairing based on the following criteria:\n
+        
+        - The season is {season}\n
+        - The location is {location}\n\n
+
+        Answer briefly in a single paragraph in plain text without any markup formatting.
+        """
+
+    response = ollama.generate(
+        model=OLLAMA_MODEL,
+        prompt = prompt
+    )
+    data = {
+        "response": response['response']
     }
-    response = requests.post(f"{OLLAMA_HOST}/api/recommendations", json=payload)
-    return response.json()
+
+    return data
