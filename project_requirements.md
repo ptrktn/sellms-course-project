@@ -3,7 +3,7 @@
 This system is a locally hosted, containerized web application that generates season- and location-aware wine and cheese recommendations using an Ollama-backed LLM. It blends automatic context (current date/time and IP-based geolocation) with manual overrides, prioritizing privacy and resilience.
 
 - **Purpose:** Deliver delightful, culturally relevant pairings by interpreting seasonal cues and regional availability, while remaining fully controllable and reproducible in a local environment.
-- **Scope:** Includes a Dockerized LLM service (Ollama), a containerized web frontend, an API layer, configurable context derivation, secure logging, monitoring hooks, and testable, deterministic behavior with fallbacks.
+- **Scope:** Includes a Dockerized LLM service (Ollama) and a containerized web frontend.
 
 ---
 
@@ -11,22 +11,15 @@ This system is a locally hosted, containerized web application that generates se
 
 ## Product perspective
 
-- **Architecture:** Two primary containers: an Ollama LLM engine and a web frontend (with API). Communication occurs over an internal Docker network, with explicit health checks, resource limits, and persistent storage volumes for LLM models and app state.
+- **Architecture:** Two primary containers: an Ollama LLM engine and a web frontend (with API). Communication occurs over an internal Docker network, and persistent storage volumes for LLM models.
 - **Context sources:** Manual inputs for season and location, plus automatic derivation via system clock and IP-based geolocation. Users can toggle or blend these sources.
-- **Operational model:** Local-first, offline-capable where possible. Minimal external dependencies beyond optional geolocation. Configuration via environment variables and mounted volumes.
+- **Operational model:** Local-first, offline-capable. Minimal external dependencies beyond optional geolocation. Configuration via environment variables.
 
 ## Product functions
 
-- **Pairing generation:** Produce wine + cheese recommendations with rationale, regional fit, seasonal mood, and serving notes.
+- **Pairing generation:** Produce wine and cheese recommendations with rationale, regional fit, seasonal mood, and serving notes.
 - **Context derivation:** Determine season from current date/time and location from IP geolocation; allow user overrides at any time.
-- **Explainability:** Provide brief justifications (style, region, climate cues) and alternates (budget, availability).
-- **Reliability:** Graceful fallbacks when geolocation fails or LLM is unavailable; deterministic test modes.
-
-## User characteristics
-
-- **Casual users:** Prefer simple inputs and clear recommendations with minimal configuration.
-- **Power users:** Want parameterization (model selection, temperature, region biases), reproducibility, and control over privacy and data flows.
-- **Operators:** Need deployment clarity, resource controls, health checks, logs, and backup/restore of local state.
+- **Explainability:** Provide brief justifications (style, region, climate cues).
 
 ---
 
@@ -37,7 +30,7 @@ This system is a locally hosted, containerized web application that generates se
 - **AR-1:** The system SHALL consist of two containers: ollama-llm and web-frontend, connected via an internal Docker network.
 - **AR-2:** The ollama-llm container SHALL persist model files via a mounted volume to avoid re-downloads.
 - **AR-3:** The web-frontend container SHALL expose HTTP endpoints to users and communicate with ollama-llm over the internal network.
-- **AR-4:** Both containers SHALL define health checks, resource limits (CPU/memory), and restart policies.
+- **AR-4:** Both containers SHALL define restart policies.
 - **AR-5:** The system SHALL support docker-compose for single-command setup.
 
 ## Functional requirements
@@ -45,7 +38,7 @@ This system is a locally hosted, containerized web application that generates se
 - **FR-1:** The system SHALL accept manual inputs for season and location.
 - **FR-2:** The system SHALL automatically derive season from current date/time and location from IP-based geolocation when user has not provided those parameters.
 - **FR-3:** The system SHALL allow users to toggle between manual and automatic context at any time.
-- **FR-4:** The system SHALL generate wine + cheese recommendations with justification, regional fit, seasonal notes, and serving suggestions.
+- **FR-4:** The system SHALL generate wine and cheese recommendations with justification, regional fit, seasonal notes, and serving suggestions.
 
 
 ## LLM integration and prompt design
@@ -54,7 +47,6 @@ This system is a locally hosted, containerized web application that generates se
 - **LLM-2:** The system SHALL expose parameters (temperature, top_p, max_tokens) and document defaults.
 - **LLM-3:** The prompt template SHALL incorporate season and location instructions.
 - **LLM-4:** The system SHALL implement guardrails to avoid unsafe content and non-actionable recommendations (e.g., unavailable products without alternatives).
-- **LLM-5:** The system SHOULD support short/long response modes and JSON output for structured rendering.
 
 ## API requirements
 

@@ -63,7 +63,10 @@ def generate_pairing(season, location, preferences):
         - The season is {season}\n
         - The location is {location}\n\n
 
-        Answer briefly in a single paragraph in plain text without any markup formatting.
+        Answer briefly in a single paragraph in plain text without any markup formatting.\n
+        Include a brief rationale for the pairing, touching on style, region, and seasonal cues.\n
+        Include serving notes if relevant.\n
+        If you cannot determine a good pairing, say so.\n
         """
 
     response = ollama.generate(
