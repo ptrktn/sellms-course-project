@@ -2,7 +2,7 @@ import requests
 import ollama
 import os
 
-from config import OLLAMA_HOST, OLLAMA_MODEL
+from config import OLLAMA_HOST, OLLAMA_MODEL, DEFAULT_REGION, DEFAULT_HEMISPHERE
 from datetime import datetime
 
 os.environ['OLLAMA_HOST'] = OLLAMA_HOST
@@ -17,17 +17,20 @@ def get_location():
         return "unknown"
 
 def get_country_and_season():
-    # Get IP info and current month
-    ipinfo = requests.get("https://ipinfo.io/json").json()
-    month = datetime.utcnow().month
-    month = int(month)
-    loc = ipinfo.get("loc", "0,0")
-    lat = float(loc.split(",")[0]) if "," in loc else 0.0
-    country = ipinfo.get("country", "unknown")
-
-    # Determine hemisphere
-    hemisphere = "northern" if lat >= 0 else "southern"
-
+    month = int(datetime.utcnow().month)
+    # Get IP info
+    try:
+        ipinfo = requests.get("https://ipinfo.io/json").json()
+        loc = ipinfo.get("loc", "0,0")
+        lat = float(loc.split(",")[0]) if "," in loc else 0.0
+        country = ipinfo.get("country", "unknown")
+        # Determine hemisphere
+        hemisphere = "northern" if lat >= 0 else "southern"
+    except Exception as e:
+        print(f"Error fetching IP info: {e}")
+        country = DEFAULT_REGION
+        hemisphere = DEFAULT_HEMISPHERE
+    
     # Assign seasons based on hemisphere
     if hemisphere == "northern":
         if month in [12, 1, 2]:
@@ -50,7 +53,7 @@ def get_country_and_season():
     return f"ISO 3166-1 country code {country}", season
 
 def generate_pairing(season, location, preferences):
-    if not season and not location:
+    if (not season and not location) or  (season not in ["spring", "summer", "autumn", "winter"]):
         location, season = get_country_and_season()
     else:
         location = location if location else get_location()
@@ -58,7 +61,7 @@ def generate_pairing(season, location, preferences):
             tmp, season = get_country_and_season()
 
     prompt = f"""
-        Suggest a wine and cheese pairing based on the following criteria:\n
+        Suggest a wine cheese pairing based on the following criteria:\n
         
         - The season is {season}\n
         - The location is {location}\n\n
@@ -70,7 +73,7 @@ def generate_pairing(season, location, preferences):
         """
 
     response = ollama.generate(
-        model=OLLAMA_MODEL,
+        model = OLLAMA_MODEL,
         prompt = prompt
     )
     data = {
