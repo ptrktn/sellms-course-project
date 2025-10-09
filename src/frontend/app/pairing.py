@@ -53,12 +53,12 @@ def get_country_and_season():
     return f"ISO 3166-1 country code {country}", season
 
 def generate_pairing(season, location, preferences):
-    if (not season and not location) or  (season not in ["spring", "summer", "autumn", "winter"]):
+    if not season and not location:
         location, season = get_country_and_season()
     else:
         location = location if location else get_location()
-        if not season:
-            tmp, season = get_country_and_season()
+        if not season or (season.lower() not in ["spring", "summer", "autumn", "winter"]):
+            _, season = get_country_and_season()
 
     prompt = f"""
         Suggest a wine cheese pairing based on the following criteria:\n
