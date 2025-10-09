@@ -4,7 +4,7 @@
 
 One of the earliest and most pivotal decisions was selecting the appropriate language model for the project. While using an API-based LLM like ChatGPT offered convenience, it also introduced potential cost concerns. Running the model locally emerged as a more sustainable and cost-effective alternative.
 
-Among the local deployment options, GPT4All and Ollama were considered. Ollama ultimately proved more suitable, especially for a Dockerized setup, offering smoother integration and better containerization support.
+Among the local deployment options, GPT4All and Ollama were considered. Ollama ultimately proved more suitable, especially for a Dockerized setup, offering smoother integration and better containerization support. Following a series of performance evaluations conducted on a Linux workstation equipped with 16 GB of RAM, Gemma3 1B was selected as the default model. This decision was based on its optimal balance of resource efficiency and responsiveness, making it well-suited for systems with moderate memory constraints.
 
 Despite the web frontend being intentionally minimal, ensuring it behaved as intended required careful tuning. Even simple interfaces can demand nuanced adjustments to align with backend logic and user expectations.
 
