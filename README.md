@@ -5,4 +5,4 @@ cd src
 docker compose up
 ```
 
-The web frontend is http://localhost:8080
+The web frontend is available at: http://localhost:8080
